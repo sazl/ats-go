@@ -251,7 +251,7 @@ and
                         | COMARGkey (_, fname) =>
                             let
                                 val () = state.ninputfile := nif + 1
-                                val () = atscc2py3_basename (state, fname(*input*))
+                                val () = atscc2py3_basename (state, fname)
                             in
                                 process_cmdline (state, arglst)
                             end
@@ -276,191 +276,141 @@ and
             end
         end
 and
-process_cmdline2_COMARGkey1
-(
-  state: &cmdstate >> _, arglst: comarglst, key: string
-) : void = let
-//
-val () = (
-//
-case+ key of
-//
-| "-i" => {
-    val () = state.ninputfile := 0
-    val () = state.waitkind := WTKinput()
-  } (* end of [-i] *)
-//
-| "-o" => {
-    val () = state.waitkind := WTKoutput ()
-  } (* end of [-o] *)
-//
-| "-h" => {
-    val () = atscc2py3_usage ("atscc2py3")
-    val () = state.waitkind := WTKnone(*void*)
-    val () = if state.ninputfile < 0 then state.ninputfile := 0
-  } (* end of [-h] *)
-//
-| _ (*unrecognized*) => comarg_warning (key)
-//
-) : void // end of [val]
-//
-in
-  process_cmdline (state, arglst)
-end // end of [process_cmdline2_COMARGkey1]
-
+    process_cmdline2_COMARGkey1
+    (state: &cmdstate >> _, arglst: comarglst, key: string)
+    : void =
+        let
+            val () = (
+                case+ key of
+                | "-i" => {
+                    val () = state.ninputfile := 0
+                    val () = state.waitkind := WTKinput()
+                }
+                | "-o" => {
+                    val () = state.waitkind := WTKoutput ()
+                }
+                | "-h" => {
+                    val () = atscc2py3_usage ("atscc2py3")
+                    val () = state.waitkind := WTKnone(*void*)
+                    val () = if state.ninputfile < 0 then state.ninputfile := 0
+                }
+                | _ => comarg_warning (key)
+            ): void
+        in
+            process_cmdline (state, arglst)
+        end
 and
-process_cmdline2_COMARGkey2
-(
-  state: &cmdstate >> _, arglst: comarglst, key: string
-) : void = let
-//
-val () = state.waitkind := WTKnone ()
-//
-val () = (
-//
-case+ key of
-//
-| "--input" => {
-    val () = state.ninputfile := 0
-    val () = state.waitkind := WTKinput()
-  } (* end of [--input] *)
-//
-| "--output" => {
-    val () = state.waitkind := WTKoutput ()
-  } (* end of [--output] *)
-//
-| "--help" => {
-    val () = atscc2py3_usage ("atscc2py3")
-    val () = state.waitkind := WTKnone(*void*)
-    val () = if state.ninputfile < 0 then state.ninputfile := 0
-  } (* end of [--help] *)
-//
-| _ (*unrecognized*) => comarg_warning (key)
-//
-) : void // end of [val]
-//
-in
-  process_cmdline (state, arglst)
-end // end of [process_cmdline2_COMARGkey2]
+    process_cmdline2_COMARGkey2
+    (state: &cmdstate >> _, arglst: comarglst, key: string)
+    : void =
+    let
+        val () = state.waitkind := WTKnone ()
+        val () = (
+            case+ key of
+            | "--input" => {
+                val () = state.ninputfile := 0
+                val () = state.waitkind := WTKinput()
+            }
+            | "--output" => {
+                val () = state.waitkind := WTKoutput ()
+            }
+            | "--help" => {
+                val () = atscc2py3_usage ("atscc2py3")
+                val () = state.waitkind := WTKnone(*void*)
+                val () = if state.ninputfile < 0 then state.ninputfile := 0
+            }
+            | _  => comarg_warning (key)
+        ) : void
+    in
+        process_cmdline (state, arglst)
+    end
 
-(* ****** ****** *)
-//
-extern
-fun
-comarg_parse (string):<> comarg
-//
-extern
-fun
-comarglst_parse{n:nat}
-  (argc: int n, argv: !argv(n)): list (comarg, n)
-// end of [comarglst_parse]
-//
-(* ****** ****** *)
+extern fun comarg_parse (string)
+:<> comarg
 
-implement
-comarg_parse
-  (str) = let
-//
-fun
-loop
-  {n,i:nat | i <= n} .<n-i>.
-(
-  str: string n, n: int n, i: int i
-) :<> comarg =
-(
-  if i < n
-    then (
-    if (str[i] != '-')
-      then COMARGkey (i, str) else loop (str, n, i+1)
-    ) else COMARGkey (n, str)
-) (* end of [if] *)
-// end of [loop]
-//
-val str = g1ofg0(str)
-val len = string_length (str)
-//
-in
-  loop (str, sz2i(len), 0)
-end // end of [comarg_parse]
+extern fun comarglst_parse
+{n:nat}
+(argc: int n, argv: !argv(n))
+: list (comarg, n)
+
+implement comarg_parse
+(str) =
+    let
+        fun loop
+        {n,i:nat | i <= n} .<n-i>.
+        (str: string n, n: int n, i: int i)
+        :<> comarg = (
+            if i < n
+            then (
+                if (str[i] != '-')
+                then COMARGkey (i, str) else loop (str, n, i+1)
+            )
+            else COMARGkey (n, str)
+        )
+
+        val str = g1ofg0(str)
+        val len = string_length (str)
+    in
+        loop (str, sz2i(len), 0)
+    end
 
 (* ****** ****** *)
 
-implement
-comarglst_parse
-  {n}(argc, argv) = let
-//
-fun
-loop
-  {i,j:nat | i <= n} .<n-i>.
-(
-  argv: !argv(n), i: int(i), res: list_vt(comarg, j)
-) : list_vt (comarg, n-i+j) =
-(
-if i < argc
-  then let
-    val res = list_vt_cons (comarg_parse (argv[i]), res)
-  in
-    loop (argv, i+1, res)
-  end // end of [then]
-  else res // end of [else]
-// end of [if]
-) (* end of [loop] *)
-//
-val res =
-  loop (argv, 0, list_vt_nil())
-//
-in
-  list_vt2t (list_vt_reverse (res))
-end // end of [comarglst_parse]
+implement comarglst_parse
+{n}(argc, argv) =
+    let
+        fun loop
+        {i,j:nat | i <= n} .<n-i>.
+        (argv: !argv(n), i: int(i), res: list_vt(comarg, j))
+        : list_vt (comarg, n-i+j) = (
+            if i < argc
+            then
+                let
+                    val res = list_vt_cons (comarg_parse (argv[i]), res)
+                in
+                    loop (argv, i+1, res)
+                end
+            else res
+        )
+        val res = loop (argv, 0, list_vt_nil())
+    in
+        list_vt2t (list_vt_reverse (res))
+    end
 
 (* ****** ****** *)
 
 implement
 main0
-(
-argc, argv
-) = {
-//
-val () =
-prerrln!
-(
-  "Hello from atscc2py3!"
-) (* end of [val] *)
-//
-//
-val arglst =
-  comarglst_parse(argc, argv)
-//
-val+list_cons(arg0, arglst) = arglst
-//
-var
-state = @{
-  comarg0= arg0
-, ncomarg= 0
-, waitkind= WTKnone
-, ninputfile= ~1
-, outchan= OUTCHANref(stdout_ref)
-, nerror= 0
-} : cmdstate
-val () = process_cmdline(state, arglst)
-val () =
-if
-state.nerror = 1
-then let
-  val () =
-  println! ("atscc2py3: there is a reported error.")
-in
-end
-else if
-state.nerror >= 2
-then let
-  val () =
-  println! ("atscc2py3: there are some reported errors.")
-in
-end
-else ()
-(*
-val () =
-prerrln! ("Good-bye from atscc2py3!")
-*)
+(argc, argv) = {
+    val () = prerrln!("Hello from atscc2py3!")
+    val arglst = comarglst_parse(argc, argv)
+    val+list_cons(arg0, arglst) = arglst
+
+    var state = @{
+        arg0 = arg0,
+        arg_count = 0,
+        waitkind= WTKnone,
+        input_file_count = ~1,
+        out_chan = OUTCHANref(stdout_ref),
+        error_count = 0,
+    } : cmdstate
+
+    val () = process_cmdline(state, arglst)
+    val () =
+        if state.nerror = 1
+        then
+            let
+                val () = println! ("atscc2py3: there is a reported error.")
+            in
+            end
+        else if state.nerror >= 2
+        then
+            let
+                val () = println! ("atscc2py3: there are some reported errors.")
+            in
+            end
+        else
+            ()
+
+    val () = prerrln! ("Good-bye from atscc2py3!")
 }
