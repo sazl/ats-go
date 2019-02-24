@@ -6,7 +6,7 @@ staload UN = "prelude/SATS/unsafe.sats"
 #else
     #define
     CATSPARSEMIT_targetloc
-    "./../CATS-parsemit"
+    "./../../vendor/CATS-parsemit"
 #endif
 
 
