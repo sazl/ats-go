@@ -1,20 +1,9 @@
 #include "share/atspre_staload.hats"
 staload UN = "prelude/SATS/unsafe.sats"
 
-#if defined (CATSPARSEMIT_targetloc)
-#then
-#else
-    #define
-    CATSPARSEMIT_targetloc
-    "./../../vendor/CATS-parsemit"
-#endif
+staload "./../SATS/emit.sats"
 
-
-#staload "{$CATSPARSEMIT}/SATS/catsparse.sats"
-#staload "{$CATSPARSEMIT}/SATS/catsparse_emit.sats"
-#staload "{$CATSPARSEMIT}/SATS/catsparse_syntax.sats"
-#staload "{$CATSPARSEMIT}/SATS/catsparse_typedef.sats"
-
+(*
 local
     staload TM = "libats/libc/SATS/time.sats"
     typedef time_t = $TM.time_t
@@ -502,3 +491,4 @@ in
         in
         end
 end
+*)

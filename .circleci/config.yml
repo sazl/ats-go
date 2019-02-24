@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: dockerhwxi/ats2:v0.3.11
+    steps:
+      - checkout
+      - run: make
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
