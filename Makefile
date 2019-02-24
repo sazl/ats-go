@@ -1,40 +1,15 @@
-######
-#
-# A simple Makefile
-#
-######
 
 NPM=npm
 MAKE=make
 
-######
+all:: ; $(MAKE) -C build -f ../build.mk all
 
-all:: ; \
-$(MAKE) \
--C BUILD -f ../Makefile_build all
-
-######
-
-npm:: ; \
-$(MAKE) \
--C BUILD -f ../Makefile_build npm
-
-######
+npm:: ; $(MAKE) -C build -f ../build.mk npm
 
 npm-update:: ; $(NPM) update
-npm-install:: ; $(NPM) install
 
-######
+npm-install:: ; $(NPM) install
 
 cleanall:: ; rm -f node_modules -r
 cleanall:: ; rm -f package-lock.json
-
-######
-#
-cleanall:: ; \
-$(MAKE) \
--C BUILD -f ../Makefile_build cleanall
-#
-######
-
-###### end of [Makefile] ######
+cleanall:: ; $(MAKE) -f ../build.mk cleanall
