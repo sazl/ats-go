@@ -6,6 +6,8 @@
     "./../../vendor/CATS-parsemit"
 #endif
 
+#include "share/atspre_staload.hats"
+staload UN = "prelude/SATS/unsafe.sats"
 
 #staload "{$CATSPARSEMIT}/SATS/catsparse.sats"
 #staload "{$CATSPARSEMIT}/SATS/catsparse_emit.sats"

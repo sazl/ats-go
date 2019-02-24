@@ -52,5 +52,4 @@ clean:: ; $(RMF) *_?ats.c
 cleanall:: clean
 
 cleanall:: ; $(RMF) ./../bin/ats-go
-cleanall:: ; $(RMF) ./../npm/CATS/catsparse_sats.c
-cleanall:: ; $(RMF) ./../npm/CATS/atscc2py3_*_dats.c
+

@@ -1,18 +1,6 @@
 #include "share/atspre_define.hats"
 #include "share/atspre_staload.hats"
 
-staload STDIO = "{$PATSLIBATSLIBC}/SATS/stdio.sats"
-
-#if defined (CATSPARSEMIT_targetloc)
-#then
-#else
-    #define CATSPARSEMIT_targetloc "./../../vendor/CATS-parsemit"
-#endif
-
-#staload "{$CATSPARSEMIT}/SATS/catsparse.sats"
-#staload "{$CATSPARSEMIT}/SATS/catsparse_emit.sats"
-#staload "{$CATSPARSEMIT}/SATS/catsparse_parsing.sats"
-
 val () = catsparse_all_dynload() where {
     extern fun
     catsparse_all_dynload(): void = "ext#"
@@ -22,7 +10,6 @@ val () = catsparse_all_dynload() where {
 #dynload "./cli.dats"
 #dynload "./emit.dats"
 #dynload "./emit2.dats"
-
 
 implement main0
 (argc, argv) = {

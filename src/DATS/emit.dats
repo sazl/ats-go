@@ -1,6 +1,3 @@
-#include "share/atspre_staload.hats"
-staload UN = "prelude/SATS/unsafe.sats"
-
 staload "./../SATS/emit.sats"
 
 (*

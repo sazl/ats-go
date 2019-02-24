@@ -1,10 +1,18 @@
-#staload "../SATS/cli.sats"
+#staload "./../SATS/cli.sats"
+#staload "./../SATS/util.sats"
 
-implement command_state_set_outchan
+implement outchan_get_fileref
+(chan_out) = (
+    case+ chan_out of
+    | OUTCHANref (filr) => filr
+    | OUTCHANptr (filp) => filp
+)
+
+implement cli_state_set_outchan
 (state, chan_new) =
     let
-        val chan_old = state.outchan
-        val () = state.outchan := chan_new
+        val chan_old = state.out_chan
+        val () = state.out_chan := chan_new
     in
         case+
         chan_old of
@@ -16,31 +24,31 @@ implement command_state_set_outchan
             end
     end
 
-implement command_state_set_outchan_basename
+implement cli_state_set_outchan_basename
 (state, basename) =
     let
         val filp = $STDIO.fopen(basename, file_mode_w)
         val p0 = $STDIO.ptrcast(filp)
-        (* val () = println! ("cmdstate_set_outchan_basename: p0 = ", p0) *)
+        (* val () = println! ("cli_state_set_outchan_basename: p0 = ", p0) *)
     in
         if p0 > 0
         then
             let
                 val filp = $UNSAFE.castvwtp0{FILEref}(filp)
             in
-                command_state_set_outchan(state, OUTCHANptr(filp))
+                cli_state_set_outchan(state, OUTCHANptr(filp))
             end
         else
             let
                 prval () = $STDIO.FILEptr_free_null (filp)
-                val () = state.nerror := state.nerror + 1
+                val () = state.error_count := state.error_count + 1
             in
-                cmdstate_set_outchan (state, OUTCHANref(stderr_ref))
+                cli_state_set_outchan (state, OUTCHANref(stderr_ref))
             end
 end
 
 fn isinwait
-(state: cmdstate)
+(state: cli_state)
 : bool = (
   case+ state.waitkind of
   | WTKinput () => true
@@ -48,14 +56,14 @@ fn isinwait
 )
 
 fn isoutwait
-(state: cmdstate)
+(state: cli_state)
 : bool = (
   case+ state.waitkind of
   | WTKoutput () => true
   | _ => false
 )
 
-implement comarg_warning
+implement cli_argument_warning
 (msg) = {
   val () = prerr ("waring(ATS)")
   val () = prerr (": unrecognized command line argument [")
@@ -78,14 +86,14 @@ fun go_usage
 }
 
 fun process_cmdline
-(state: &cmdstate, arglst: comarglst)
+(state: &cli_state, arglst: cli_argument_list)
 : void =
     let
     in
         case+ arglst of
         | list_nil () =>
             let
-                val nif = state.ninputfile
+                val nif = state.input_file_count
                 val wait0 = (
                     case+ 0 of
                     | _ when nif < 0 => true
@@ -94,28 +102,28 @@ fun process_cmdline
                 ) : bool
             in
                 if wait0 then (
-                    if state.ncomarg = 0
-                    then atscc2py3_usage ("atscc2py3")
-                    else atscc2py3_fileref (state, stdin_ref)
+                    if state.arg_count = 0
+                    then go_usage ("atscc2py3")
+                    else go_fileref (state, stdin_ref)
                 )
             end
         | list_cons (arg, arglst) =>
             let
-                val () = state.ncomarg := state.ncomarg + 1
+                val () = state.arg_count := state.arg_count + 1
             in
                 process_cmdline2 (state, arg, arglst)
             end
     end
 and
     process_cmdline2
-    (state: &cmdstate, arg: comarg, arglst: comarglst)
+    (state: &cli_state, arg: cli_argument, arglst: cli_argument_list)
     : void =
         let
         in
             case+ arg of
             | _ when isinwait(state) =>
                 let
-                    val nif = state.ninputfile
+                    val nif = state.input_file_count
                 in
                     case+ arg of
                     | COMARGkey (1, key) when nif > 0 =>
@@ -124,8 +132,8 @@ and
                         process_cmdline2_COMARGkey2 (state, arglst, key)
                     | COMARGkey (_, fname) =>
                         let
-                            val () = state.ninputfile := nif + 1
-                            val () = atscc2py3_basename (state, fname)
+                            val () = state.input_file_count := nif + 1
+                            val () = go_basename (state, fname)
                         in
                             process_cmdline (state, arglst)
                         end
@@ -133,7 +141,7 @@ and
             | _ when isoutwait(state) =>
                 let
                     val COMARGkey (_, fname) = arg
-                    val () = cmdstate_set_outchan_basename (state, fname)
+                    val () = cli_state_set_outchan_basename (state, fname)
                     val () = state.waitkind := WTKnone ()
                 in
                     process_cmdline (state, arglst)
@@ -143,7 +151,7 @@ and
             | COMARGkey (2, key) =>
                 process_cmdline2_COMARGkey2 (state, arglst, key)
             | COMARGkey (_, key) => let
-                val () = comarg_warning (key)
+                val () = cli_argument_warning (key)
                 val () = state.waitkind := WTKnone ()
             in
                 process_cmdline (state, arglst)
@@ -151,61 +159,61 @@ and
         end
 and
     process_cmdline2_COMARGkey1
-    (state: &cmdstate >> _, arglst: comarglst, key: string)
+    (state: &cli_state >> _, arglst: cli_argument_list, key: string)
     : void =
         let
             val () = (
                 case+ key of
                 | "-i" => {
-                    val () = state.ninputfile := 0
+                    val () = state.input_file_count := 0
                     val () = state.waitkind := WTKinput()
                 }
                 | "-o" => {
                     val () = state.waitkind := WTKoutput ()
                 }
                 | "-h" => {
-                    val () = atscc2py3_usage ("atscc2py3")
+                    val () = go_usage ("atscc2py3")
                     val () = state.waitkind := WTKnone
-                    val () = if state.ninputfile < 0 then state.ninputfile := 0
+                    val () = if state.input_file_count < 0 then state.input_file_count := 0
                 }
-                | _ => comarg_warning (key)
+                | _ => cli_argument_warning (key)
             ): void
         in
             process_cmdline (state, arglst)
         end
 and
     process_cmdline2_COMARGkey2
-    (state: &cmdstate >> _, arglst: comarglst, key: string)
+    (state: &cli_state >> _, arglst: cli_argument_list, key: string)
     : void =
     let
         val () = state.waitkind := WTKnone ()
         val () = (
             case+ key of
             | "--input" => {
-                val () = state.ninputfile := 0
+                val () = state.input_file_count := 0
                 val () = state.waitkind := WTKinput()
             }
             | "--output" => {
                 val () = state.waitkind := WTKoutput ()
             }
             | "--help" => {
-                val () = atscc2py3_usage ("atscc2py3")
+                val () = go_usage ("atscc2py3")
                 val () = state.waitkind := WTKnone
-                val () = if state.ninputfile < 0 then state.ninputfile := 0
+                val () = if state.input_file_count < 0 then state.input_file_count := 0
             }
-            | _  => comarg_warning (key)
+            | _  => cli_argument_warning (key)
         ) : void
     in
         process_cmdline (state, arglst)
     end
 
-implement comarg_parse
+implement cli_argument_parse
 (str) =
     let
         fun loop
         {n,i:nat | i <= n} .<n-i>.
         (str: string n, n: int n, i: int i)
-        :<> comarg = (
+        :<> cli_argument = (
             if i < n
             then (
                 if (str[i] != '-')
@@ -225,12 +233,12 @@ implement cli_argument_list_parse
     let
         fun loop
         {i,j:nat | i <= n} .<n-i>.
-        (argv: !argv(n), i: int(i), res: list_vt(comarg, j))
-        : list_vt (comarg, n-i+j) = (
+        (argv: !argv(n), i: int(i), res: list_vt(cli_argument, j))
+        : list_vt (cli_argument, n-i+j) = (
             if i < argc
             then
                 let
-                    val res = list_vt_cons (comarg_parse (argv[i]), res)
+                    val res = list_vt_cons (cli_argument_parse (argv[i]), res)
                 in
                     loop (argv, i+1, res)
                 end
