@@ -1,3 +1,5 @@
+#include "share/atspre_staload.hats"
+
 #staload "./../SATS/cli.sats"
 #staload "./../SATS/util.sats"
 

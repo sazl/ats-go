@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: dockerhwxi/ats2:v0.3.11
+      - image: steinwaywhw/ats:v0.3.13
     steps:
       - checkout
       - run: make

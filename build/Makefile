@@ -32,7 +32,7 @@ ats-go
 ats-go: \
 $(SOURCES_DATS); \
 $(PATSCC) \
-  -DATS_MEMALLOC_GCBDW -O2 -o ./../bin/ats-go \
+  -DATS_MEMALLOC_GCBDW -O2 -o ats-go \
   $(SOURCES_DATS) $(SOURCES_SATS) $(SOURCES_CATS) -lgc
 
 npm:: ats-go

@@ -1,9 +1,19 @@
 #include "share/atspre_staload.hats"
 staload UN = "prelude/SATS/unsafe.sats"
 
+#if defined (CATSPARSEMIT_targetloc)
+#then
+#else
+    #define CATSPARSEMIT_targetloc "./../../vendor/CATS-parsemit"
+#endif
+
+#staload "{$CATSPARSEMIT}/SATS/catsparse.sats"
+#staload "{$CATSPARSEMIT}/SATS/catsparse_emit.sats"
+#staload "{$CATSPARSEMIT}/SATS/catsparse_syntax.sats"
+#staload "{$CATSPARSEMIT}/SATS/catsparse_typedef.sats"
+
 staload "./../SATS/emit2.sats"
 
-(*
 local
     val the_statmps = ref<d0eclist> (list_nil)
 in
@@ -1378,4 +1388,3 @@ implement emit_toplevel
     in
         loop(out, d0cs)
     end
-*)

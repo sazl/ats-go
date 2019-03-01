@@ -1,2 +1,4 @@
 *_dats.c
 *_sats.c
+node_modules/
+build/ats-go
