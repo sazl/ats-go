@@ -1,9 +1,10 @@
 
 MAKE=make
+CPF=cp -f
+RMF=rm -f
+
 PATSCC=$(PATSHOME)/bin/patscc
 PATSOPT=$(PATSHOME)/bin/patsopt
-
-all::
 
 CATSPARSEMIT=./../vendor/CATS-parsemit
 
@@ -25,31 +26,17 @@ SOURCES_SATS += ./../src/SATS/cli.sats
 SOURCES_CATS :=
 SOURCES_CATS += $(CATSPARSEMIT)/CATS/catsparse_all_dats.c
 
-all:: ; $(MAKE) -C $(CATSPARSEMIT) all
+all: cats-parsemit ats-go
 
-all:: \
-ats-go
-ats-go: \
-$(SOURCES_DATS); \
-$(PATSCC) \
-  -DATS_MEMALLOC_GCBDW -O2 -o ats-go \
-  $(SOURCES_DATS) $(SOURCES_SATS) $(SOURCES_CATS) -lgc
+cats-parsemit:
+	$(MAKE) -C $(CATSPARSEMIT) all
 
-npm:: ats-go
-npm:: ; \
-$(CPF) catsparse_sats.c atscc2py3_*_dats.c ./../npm/CATS/.
+ats-go: $(SOURCES_DATS)
+	$(PATSCC) \
+		-DATS_MEMALLOC_GCBDW -O2 -o ats-go \
+		$(SOURCES_DATS) $(SOURCES_SATS) $(SOURCES_CATS) -lgc
 
-CPF=cp -f
-RMF=rm -f
-
-testall:: all
-testall:: cleanall
-
-clean:: ; $(RMF) *~
-clean:: ; $(RMF) *_?ats.o
-clean:: ; $(RMF) *_?ats.c
-
-cleanall:: clean
-
-cleanall:: ; $(RMF) ./../bin/ats-go
-
+clean:
+	$(RMF) *_?ats.o
+	$(RMF) *_?ats.c
+	$(RMF) ./../bin/ats-go

@@ -33,7 +33,7 @@ implement cli_state_set_outchan_basename
     let
         val filp = $STDIO.fopen(basename, file_mode_w)
         val p0 = $STDIO.ptrcast(filp)
-        (* val () = println! ("cli_state_set_outchan_basename: p0 = ", p0) *)
+        val () = println! ("cli_state_set_outchan_basename: p0 = ", p0)
     in
         if p0 > 0
         then
@@ -217,7 +217,8 @@ implement cli_argument_parse
             if i < n
             then (
                 if (str[i] != '-')
-                then COMARGkey (i, str) else loop (str, n, i+1)
+                then COMARGkey (i, str)
+                else loop (str, n, i+1)
             )
             else COMARGkey (n, str)
         )
@@ -242,7 +243,8 @@ implement cli_argument_list_parse
                 in
                     loop (argv, i+1, res)
                 end
-            else res
+            else
+                res
         )
         val res = loop (argv, 0, list_vt_nil())
     in

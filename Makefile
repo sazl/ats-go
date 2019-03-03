@@ -2,15 +2,14 @@
 NPM=npm
 MAKE=make
 
-all:: ; $(MAKE) -C build all
+all:
+	$(MAKE) -C build all
 
-npm:: ; $(MAKE) -C build npm
+test:
+	$(MAKE) -C test all
 
-npm-update:: ; $(NPM) update
-
-npm-install:: ; $(NPM) install
-
-cleanall:: ; rm -f node_modules -r
-cleanall:: ; rm -f package-lock.json
-cleanall:: ; $(MAKE) -C build cleanall
-cleanall:: ; $(MAKE) -C vendor/CATS-parsemit cleanall
+clean:
+	rm -rf node_modules
+	rm -f package-lock.json
+	$(MAKE) -C build clean
+	$(MAKE) -C vendor/CATS-parsemit cleanall

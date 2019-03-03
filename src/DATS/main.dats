@@ -13,7 +13,7 @@ val () = catsparse_all_dynload() where {
 
 implement main0
 (argc, argv) = {
-    val () = prerrln!("Hello from atscc2py3!")
+    val () = prerrln!("ats-go: <version>")
     val arglst = cli_argument_list_parse(argc, argv)
     val+ list_cons(arg0, arglst) = arglst
 
