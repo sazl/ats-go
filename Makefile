@@ -5,9 +5,11 @@ MAKE=make
 all:
 	$(MAKE) -C build all
 
+.PHONY: test
 test:
 	$(MAKE) -C test test
 
+.PHONY: clean
 clean:
 	rm -rf node_modules
 	rm -f package-lock.json
