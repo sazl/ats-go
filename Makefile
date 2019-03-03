@@ -6,7 +6,7 @@ all:
 	$(MAKE) -C build all
 
 test:
-	$(MAKE) -C test all
+	$(MAKE) -C test test
 
 clean:
 	rm -rf node_modules

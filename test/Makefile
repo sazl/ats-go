@@ -10,4 +10,4 @@ test: ats-go
 	./test.sh
 
 ats-go:
-	$(MAKE) -C ../build all
+	$(MAKE) -C .. all
