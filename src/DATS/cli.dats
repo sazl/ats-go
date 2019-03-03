@@ -1,3 +1,5 @@
+#define ATS_DYNLOADFLAG 0
+
 #include "share/atspre_staload.hats"
 
 #staload "./../SATS/cli.sats"
@@ -87,9 +89,8 @@ fun go_usage
     val () = println! ("  --help : for printing out this help usage")
 }
 
-fun process_cmdline
-(state: &cli_state, arglst: cli_argument_list)
-: void =
+implement process_cmdline
+(state, arglst) =
     let
     in
         case+ arglst of
@@ -116,10 +117,9 @@ fun process_cmdline
                 process_cmdline2 (state, arg, arglst)
             end
     end
-and
-    process_cmdline2
-    (state: &cli_state, arg: cli_argument, arglst: cli_argument_list)
-    : void =
+
+implement process_cmdline2
+(state, arg, arglst) =
         let
         in
             case+ arg of
@@ -159,34 +159,32 @@ and
                 process_cmdline (state, arglst)
             end
         end
-and
-    process_cmdline2_COMARGkey1
-    (state: &cli_state >> _, arglst: cli_argument_list, key: string)
-    : void =
-        let
-            val () = (
-                case+ key of
-                | "-i" => {
-                    val () = state.input_file_count := 0
-                    val () = state.waitkind := WTKinput()
-                }
-                | "-o" => {
-                    val () = state.waitkind := WTKoutput ()
-                }
-                | "-h" => {
-                    val () = go_usage ("atscc2py3")
-                    val () = state.waitkind := WTKnone
-                    val () = if state.input_file_count < 0 then state.input_file_count := 0
-                }
-                | _ => cli_argument_warning (key)
-            ): void
-        in
-            process_cmdline (state, arglst)
-        end
-and
-    process_cmdline2_COMARGkey2
-    (state: &cli_state >> _, arglst: cli_argument_list, key: string)
-    : void =
+
+implement process_cmdline2_COMARGkey1
+(state, arglst, key) =
+    let
+        val () = (
+            case+ key of
+            | "-i" => {
+                val () = state.input_file_count := 0
+                val () = state.waitkind := WTKinput()
+            }
+            | "-o" => {
+                val () = state.waitkind := WTKoutput ()
+            }
+            | "-h" => {
+                val () = go_usage ("atscc2py3")
+                val () = state.waitkind := WTKnone
+                val () = if state.input_file_count < 0 then state.input_file_count := 0
+            }
+            | _ => cli_argument_warning (key)
+        ): void
+    in
+        process_cmdline (state, arglst)
+    end
+
+implement process_cmdline2_COMARGkey2
+(state, arglst, key) =
     let
         val () = state.waitkind := WTKnone ()
         val () = (

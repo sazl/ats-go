@@ -1,3 +1,7 @@
+#define ATS_DYNLOADFLAG 0
+
+#include "share/atspre_staload.hats"
+
 #if defined (CATSPARSEMIT_targetloc)
 #then
 #else
@@ -11,7 +15,6 @@ staload "{$CATSPARSEMIT}/SATS/catsparse_parsing.sats"
 staload "./../SATS/util.sats"
 staload "./../SATS/cli.sats"
 
-(*
 implement go_fileref
   (state, inp) =
     let
@@ -62,4 +65,3 @@ implement go_basename_
             in
             end
 end
-*)

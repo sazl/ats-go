@@ -1,3 +1,5 @@
+#define ATS_DYNLOADFLAG 0
+
 #if defined (CATSPARSEMIT_targetloc)
 #then
 #else
@@ -27,10 +29,7 @@ in
             val () = tm := $TM.time_get()
             val (pfopt | p_tm) = $TM.localtime(tm)
 
-            val () = emit_text(out, "######\n");
-            val () = emit_text(out, "##\n");
-            val () = emit_text(out, "## The Python3 code\n")
-            val () = emit_text(out, "## is generated from ATS source by atscc2py3\n")
+            val () = emit_text(out, "## ats-go\n")
             val () = emit_text(out, "## The starting compilation time is: ")
 
             val () =
@@ -407,11 +406,11 @@ implement emit_SELboxrec
 
 implement emit_COMMENT_line
 (out, tok) =
-    emit_text (out, "#COMMENT_line(...)\n")
+    emit_text (out, "// COMMENT_line(...)\n")
 
 implement emit_COMMENT_block
 (out, tok) =
-    emit_text (out, "#COMMENT_block(...)\n")
+    emit_text (out, "// COMMENT_block(...)\n")
 
 local
     fun aux0_arglst
@@ -473,11 +472,11 @@ in
             val- S0Elist(s0es_arg) = arg.s0exp_node
 
             val () = emit_ENDL (out)
-            val () = emit_text (out, "def ")
+            val () = emit_text (out, "fun ")
             val () = emit_label (out, fl)
             val () = emit_text (out, "__closurerize(")
             val () = aux0_envlst (out, s0es_env, 0, 0)
-            val () = emit_text (out, "):\n")
+            val () = emit_text (out, ") {\n")
 
             val () = emit_nspc (out, 2)
             val () = emit_text (out, "def ")

@@ -55,3 +55,19 @@ fun cli_argument_list_parse
 
 fun cli_argument_parse (string)
 :<> cli_argument
+
+fun process_cmdline
+(state: &cli_state, arglst: cli_argument_list)
+: void
+and
+  process_cmdline2
+    (state: &cli_state, arg: cli_argument, arglst: cli_argument_list)
+    : void
+and
+  process_cmdline2_COMARGkey1
+      (state: &cli_state >> _, arglst: cli_argument_list, key: string)
+      : void
+and
+  process_cmdline2_COMARGkey2
+      (state: &cli_state >> _, arglst: cli_argument_list, key: string)
+      : void
