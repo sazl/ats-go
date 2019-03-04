@@ -1,15 +1,14 @@
-
-NPM=npm
-MAKE=make
+.PHONY: all debug test clean
 
 all:
 	$(MAKE) -C build all
 
-.PHONY: test
+debug:
+	$(MAKE) -C build debug
+
 test:
 	$(MAKE) -C test test
 
-.PHONY: clean
 clean:
 	rm -rf node_modules
 	rm -f package-lock.json

@@ -2,3 +2,4 @@
 *_sats.c
 node_modules/
 build/ats-go
+build/ats-go-debug

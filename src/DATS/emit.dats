@@ -1,5 +1,3 @@
-#define ATS_DYNLOADFLAG 0
-
 #if defined (CATSPARSEMIT_targetloc)
 #then
 #else

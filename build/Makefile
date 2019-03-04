@@ -1,5 +1,5 @@
+.PHONY: all debug cats-parsemit clean
 
-MAKE=make
 CPF=cp -f
 RMF=rm -f
 
@@ -26,17 +26,20 @@ SOURCES_SATS += ./../src/SATS/cli.sats
 SOURCES_CATS :=
 SOURCES_CATS += $(CATSPARSEMIT)/CATS/catsparse_all_dats.c
 
-all: cats-parsemit ats-go
+all: ats-go
 
-cats-parsemit:
+debug: ats-go-debug
+
+$(SOURCES_CATS):
 	$(MAKE) -C $(CATSPARSEMIT) all
 
-ats-go: $(SOURCES_DATS)
-	$(PATSCC) \
-		-DATS_MEMALLOC_GCBDW -O2 -o ats-go \
-		$(SOURCES_DATS) $(SOURCES_SATS) $(SOURCES_CATS) -lgc
+ats-go-debug: $(SOURCES_DATS) $(SOURCES_SATS) $(SOURCES_CATS)
+	$(PATSCC) -DATS_MEMALLOC_GCBDW -g -O0 -o $@ $^ -lgc
+
+ats-go: $(SOURCES_DATS) $(SOURCES_SATS) $(SOURCES_CATS)
+	$(PATSCC) -DATS_MEMALLOC_GCBDW -O2 -o $@ $^ -lgc
 
 clean:
 	$(RMF) *_?ats.o
 	$(RMF) *_?ats.c
-	$(RMF) ./../bin/ats-go
+	$(RMF) ats-go

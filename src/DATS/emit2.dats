@@ -1,5 +1,3 @@
-#define ATS_DYNLOADFLAG 0
-
 #include "share/atspre_staload.hats"
 staload UN = "prelude/SATS/unsafe.sats"
 

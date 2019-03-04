@@ -11,6 +11,9 @@ val () = catsparse_all_dynload() where {
 #staload "./../SATS/emit.sats"
 #staload "./../SATS/emit2.sats"
 
+#dynload "./emit.dats"
+#dynload "./emit2.dats"
+
 implement main0
 (argc, argv) = {
     val () = prerrln!("ats-go: <version>")
