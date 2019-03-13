@@ -3,6 +3,11 @@ set -e
 
 PATSOPT="$PATSHOME/bin/patsopt"
 
-for fname in fixtures/*.dats; do
-    ${PATSOPT} -d "${fname}" | ../build/ats-go-debug -i
-done
+if (( $# != 1 ))
+then
+    for fname in fixtures/*.dats; do
+        ./ats_go.sh "${fname}" # > /dev/null 2>&1
+    done
+else
+    ./ats_go.sh "$@"
+fi

@@ -81,7 +81,7 @@ implement emit_PMVintrep
 
 implement emit_PMVbool
 (out, tfv) = (
-    emit_text (out, if tfv then "True" else "False")
+    emit_text (out, if tfv then "true" else "false")
 )
 
 implement emit_PMVfloat
@@ -118,7 +118,7 @@ implement emit_PMVf0loat
 
 implement emit_PMVempty
 (out, _) =
-    emit_text (out, "None")
+    emit_text (out, "nil")
 
 implement emit_PMVextval
 (out, toks) =
@@ -233,7 +233,6 @@ implement emit_d0exp
         | D0Eide (tmp) => {
             val () = emit_tmpvar (out, tmp)
         }
-
         | D0Eappid (fid, d0es) => {
             val () = emit_i0de (out, fid)
             val () = emit_LPAREN (out)

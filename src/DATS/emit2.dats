@@ -442,10 +442,8 @@ implement emit2_instr
         | ATSif (d0e, inss, inssopt) => {
             val () = emit_nspc (out, ind)
             val () = emit_text (out, "if ")
-            val () = emit_LPAREN (out)
             val () = emit_d0exp (out, d0e)
-            val () = emit_RPAREN (out)
-            val () = emit_text (out, ":\n")
+            val () = emit_text (out, " {\n")
             val () = emit2_instrlst (out, ind+2, inss)
             val () = (
                 case+ inssopt of
@@ -455,32 +453,36 @@ implement emit2_instr
                     | list_nil _ => ()
                     | list_cons _ => {
                         val () = emit_nspc (out, ind)
-                        val () = emit_text (out, "else:\n")
+                        val () = emit_text (out, "} else {\n")
                         val () = emit2_instrlst (out, ind+2, inss)
                     }
                 )
             )
 
             val () = emit_nspc (out, ind)
-            val () = emit_text (out, "#endif")
+            val () = emit_text (out, "}\n")
+            val () = emit_nspc (out, ind)
+            val () = emit_text (out, "// endif")
 
         }
 
         | ATSifthen (d0e, inss) => {
             val- list_sing(ins) = inss
             val () = emit_nspc (out, ind)
-            val () = emit_text (out, "if(")
+            val () = emit_text (out, "if ")
             val () = emit_d0exp (out, d0e)
-            val () = emit_text (out, "): ")
+            val () = emit_text (out, " {\n")
             val () = emit_instr (out, ins)
+            val () = emit_text (out, "}\n")
         }
         | ATSifnthen (d0e, inss) => {
             val-list_sing(ins) = inss
             val () = emit_nspc (out, ind)
-            val () = emit_text (out, "if not(")
+            val () = emit_text (out, "if !(")
             val () = emit_d0exp (out, d0e)
-            val () = emit_text (out, "): ")
+            val () = emit_text (out, ") {\n")
             val () = emit_instr (out, ins)
+            val () = emit_text (out, "}\n")
         }
         | ATSbranchseq (inss) => {
             val () = emit_nspc (out, ind)
@@ -942,7 +944,7 @@ implement emit_d0ecl
             )
             val () = (
                 emit_tmpvar(out, tmp);
-                emit_text(out, " = None\n")
+                emit_text(out, " := nil\n")
             )
         }
 
@@ -995,7 +997,7 @@ implement emit2_tmpdec
         }
         | TMPDECsome(tmp, s0e) => {
             val () = emit_nspc(out, ind)
-            val () = (emit_tmpvar(out, tmp); emit_text(out, " = None"))
+            val () = (emit_tmpvar(out, tmp); emit_text(out, " := nil"))
         }
     end
 
@@ -1361,7 +1363,7 @@ implement emit_f0decl
         | F0DECLnone (fhd) => ()
         | F0DECLsome (fhd, fbody) => {
             val () = emit_ENDL(out)
-            val () = emit_text(out, "def")
+            val () = emit_text(out, "fun")
             val () = emit_SPACE(out)
             val () = emit_f0head(out, fhd)
             val () = emit_ENDL(out)

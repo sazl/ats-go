@@ -8,7 +8,7 @@ PATSCC=$(PATSHOME)/bin/patscc
 PATSOPT=$(PATSHOME)/bin/patsopt
 
 test: ats-go-debug
-	./test.sh
+	./test.sh $(fixture)
 
 ats-go-debug:
 	$(MAKE) -C .. debug
