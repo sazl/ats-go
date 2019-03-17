@@ -5,4 +5,24 @@
 
 ATS to Go Transpiler (**WIP**)
 
+## Credits
+
 Based on [ATS-Python3](https://github.com/steinwaywhw/ATS-Python3)
+
+## Build
+
+```
+make all
+```
+
+## Test
+
+```
+make test
+```
+
+Test a fixture
+
+```
+make text fixture=test/fixtures/test.dats
+```
