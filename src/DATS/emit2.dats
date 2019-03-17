@@ -1167,7 +1167,7 @@ implement emit_f0head
             val () = emit_LPAREN(out)
             val () = emit_f0marg(out, f0ma)
             val () = emit_RPAREN(out)
-            val () = emit_text(out, ":")
+            val () = emit_text (out, " {")
         }
     end
 

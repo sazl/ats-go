@@ -1,3 +1,4 @@
+*.o
 *_dats.c
 *_sats.c
 node_modules/

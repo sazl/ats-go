@@ -1,4 +1,4 @@
-.PHONY: all debug test clean
+.PHONY: all debug test clean check
 
 all:
 	$(MAKE) -C build all
@@ -8,6 +8,10 @@ debug:
 
 test:
 	$(MAKE) -C test test
+
+check:
+	echo "\n---- BUILD ----\n"
+	$(MAKE) -C build check
 
 clean:
 	rm -rf node_modules
