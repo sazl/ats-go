@@ -104,6 +104,24 @@ emit_newline(out) = fprint_newline(out)
 
 (* ****** ****** *)
 //
+
+implement
+emit_indent(out, ind) =
+  let
+    val default_space = emit_default_indent_space()
+
+    fun loop
+    (out: FILEref, nspc: int, i: int): void = (
+      if i > 0
+      then (
+        emit_nspc(out, nspc);
+        loop(out, default_space, i-1)
+      )
+    )
+  in
+    loop(out, default_space, ind)
+  end
+
 implement
 emit_nspc(out, ind) =
 (

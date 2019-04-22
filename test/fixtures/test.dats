@@ -30,11 +30,11 @@ val N = 10
 val () = println! ("fact(", N, ") = ", fact(N))
 
 %{^
-import sys
-from libatscc2py3_all import *
-sys.setrecursionlimit(1000000)
+
 %}
 
 %{$
-fact_dynload()
+fun main() {
+    fact_dynload()
+}
 %}

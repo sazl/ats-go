@@ -24,5 +24,5 @@ make test
 Test a fixture
 
 ```
-make text fixture=test/fixtures/test.dats
+make test fixture=test/fixtures/test.dats
 ```

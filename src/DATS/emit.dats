@@ -475,13 +475,13 @@ in
             val () = aux0_envlst (out, s0es_env, 0, 0)
             val () = emit_text (out, ") {\n")
 
-            val () = emit_nspc (out, 2)
-            val () = emit_text (out, "def ")
+            val () = emit_indent (out, 1)
+            val () = emit_text (out, "fun ")
             val () = emit_label (out, fl)
             val () = emit_text (out, "__cfun(")
             val () = emit_text (out, "cenv")
             val () = aux0_arglst (out, s0es_arg, 1, 0)
-            val () = emit_text (out, "): return ")
+            val () = emit_text (out, ") {\nreturn ")
             val () = (
                 emit_label (out, fl);
                 emit_LPAREN (out)
@@ -489,7 +489,7 @@ in
             val n0 = aux1_envlst (out, s0es_env, 0)
             val () = aux0_arglst (out, s0es_arg, n0, 0)
             val () = emit_text (out, ")\n")
-            val () = emit_nspc (out, 2)
+            val () = emit_indent (out, 1)
             val () = emit_text (out, "return (")
             val () = emit_label (out, fl)
             val () = emit_text (out, "__cfun, ")

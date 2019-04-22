@@ -68,6 +68,14 @@ fun emit_newline : FILEref -> void
 
 (* ****** ****** *)
 //
+
+fun
+emit_default_indent_space(): int
+
+fun
+emit_indent
+  (out: FILEref, ind: int): void
+
 fun
 emit_nspc
   (out: FILEref, ind: int): void
@@ -89,9 +97,9 @@ fun emit_text : emit_type(string)
 fun emit_symbol : emit_type(symbol)
 
 (* ****** ****** *)
-  
-fun emit_time_stamp (FILEref): void  
-  
+
+fun emit_time_stamp (FILEref): void
+
 (* ****** ****** *)
 //
 fun emit_extcode : emit_type(tokenlst)

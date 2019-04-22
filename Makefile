@@ -10,8 +10,10 @@ test:
 	$(MAKE) -C test test
 
 check:
-	echo "\n---- BUILD ----\n"
+	@echo "\n==== BUILD ====\n"
 	$(MAKE) -C build check
+	@echo "\n==== TEST ====\n"
+	$(MAKE) -C test check
 
 clean:
 	rm -rf node_modules

@@ -30,6 +30,8 @@ in
         end
 end
 
+implement emit_default_indent_space() = 4
+
 implement emit_the_statmpdeclst
 (out, ind) =
     let
@@ -46,7 +48,7 @@ implement emit_the_statmpdeclst
                     | None _ => auxlst(out, xs)
                     | Some _ => auxlst(out, xs) where {
                         val () = emit_ENDL(out)
-                        val () = emit_nspc(out, ind)
+                        val () = emit_indent(out, ind)
                         val () = (
                             emit_text(out, "global ");
                             emit_tmpvar(out, tmp)
@@ -82,7 +84,8 @@ implement emit_f0arglst_nonlocal
         case+ f0as of
         | list_nil() => { }
         | list_cons _ => {
-            val () = emit_nspc(out, 4)
+            // TODO
+            val () = emit_indent(out, 4)
             val () = emit_text(out, "nonlocal ")
             val () = auxlst(out, f0as, 0)
             val () = emit_ENDL(out)
@@ -98,22 +101,14 @@ implement emit_tmpdeclst_initize
             case+ tds of
             | list_nil() => ()
             | list_cons(td, tds) => (
-                case+
-                td.tmpdec_node
-                of
-                | TMPDECnone(tmp) =>
-                (
-                    auxlst(out, tds)
-                )
-                | TMPDECsome(tmp, _) =>
-                    auxlst(out, tds) where
-                {
-                    val () =
-                    emit_nspc(out, 2)
-
-                    val () = emit_tmpvar(out, tmp)
-                    val () = emit_text(out, " = None\n")
-                }
+                case+ td.tmpdec_node of
+                | TMPDECnone(tmp) => auxlst(out, tds)
+                | TMPDECsome(tmp, _) => auxlst(out, tds)
+                    where {
+                        val () = emit_indent(out, 1)
+                        val () = emit_tmpvar(out, tmp)
+                        val () = emit_text(out, " = None\n")
+                    }
             )
         )
     in
@@ -128,27 +123,22 @@ implement emit_tmpdeclst_nonlocal
         : void = (
             case+ tds of
             | list_nil() => ()
-            | list_cons(td, tds) =>
-            (
-                case+
-                td.tmpdec_node
-                of
-                | TMPDECnone(tmp) =>
-                (
-                    auxlst(out, tds, i)
-                )
-                | TMPDECsome(tmp, _) =>
-                auxlst(out, tds, i+1) where {
-                    val () = if i > 0 then emit_text(out, ", ")
-                    val () = emit_tmpvar(out, tmp)
-                }
+            | list_cons(td, tds) => (
+                case+ td.tmpdec_node of
+                | TMPDECnone(tmp) => auxlst(out, tds, i)
+                | TMPDECsome(tmp, _) => auxlst(out, tds, i+1)
+                    where {
+                        val () = if i > 0 then emit_text(out, ", ")
+                        val () = emit_tmpvar(out, tmp)
+                    }
             )
         )
     in
         case+ tds of
         | list_nil() => ()
         | list_cons _ => () where {
-            val () = emit_nspc(out, 4)
+            // TODO
+            val () = emit_indent(out, 4)
             val () = emit_text(out, "nonlocal")
             val () = emit_SPACE(out)
             val () = auxlst(out, tds, 0)
@@ -165,7 +155,7 @@ implement emit_mbranchlst_initize
             case+ inss of
             | list_nil() => ()
             | list_cons (_, inss) => () where {
-                val () = emit_nspc(out, 2)
+                val () = emit_indent(out, 1)
                 val () = (
                     emit_text(out, "mbranch_");
                     emit_int(out, i);
@@ -202,7 +192,8 @@ emit_mbranchlst_nonlocal
         case+ inss of
         | list_nil() => ()
         | list_cons _ => () where {
-            val () = emit_nspc(out, 4)
+            // TODO
+            val () = emit_indent(out, 2)
             val () = emit_text(out, "nonlocal ")
             val () = auxlst(out, inss, 1)
             val () = emit_ENDL(out)
@@ -359,7 +350,7 @@ fun emit_branchmap
         )
 
         val- ATScaseofseq(inss) = ins0.instr_node
-        val () = emit_nspc(out, 2)
+        val () = emit_indent(out, 1)
         val () = emit_text(out, "mbranch_")
         val () = emit_branchmap_index(out, ins0)
         val () = emit_text(out, " = ")
@@ -440,11 +431,14 @@ implement emit2_instr
     in
         case+ ins0.instr_node of
         | ATSif (d0e, inss, inssopt) => {
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "if ")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "if")
+            val () = emit_SPACE (out)
             val () = emit_d0exp (out, d0e)
-            val () = emit_text (out, " {\n")
-            val () = emit2_instrlst (out, ind+2, inss)
+            val () = emit_SPACE (out)
+            val () = emit_LBRACE (out)
+            val () = emit_newline (out)
+            val () = emit2_instrlst (out, ind+1, inss)
             val () = (
                 case+ inssopt of
                 | None() => ()
@@ -452,81 +446,97 @@ implement emit2_instr
                     case+ inss of
                     | list_nil _ => ()
                     | list_cons _ => {
-                        val () = emit_nspc (out, ind)
-                        val () = emit_text (out, "} else {\n")
-                        val () = emit2_instrlst (out, ind+2, inss)
+                        val () = emit_indent (out, ind)
+                        val () = emit_RBRACE (out)
+                        val () = emit_SPACE (out)
+                        val () = emit_text (out, "else")
+                        val () = emit_SPACE (out)
+                        val () = emit_LBRACE (out)
+                        val () = emit_newline (out)
+                        val () = emit2_instrlst (out, ind+1, inss)
                     }
                 )
             )
 
-            val () = emit_nspc (out, ind)
+            val () = emit_indent (out, ind)
             val () = emit_text (out, "}\n")
-            val () = emit_nspc (out, ind)
+            val () = emit_indent (out, ind)
             val () = emit_text (out, "// endif")
 
         }
 
         | ATSifthen (d0e, inss) => {
             val- list_sing(ins) = inss
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "if ")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "if")
+            val () = emit_SPACE (out)
             val () = emit_d0exp (out, d0e)
-            val () = emit_text (out, " {\n")
-            val () = emit_instr (out, ins)
-            val () = emit_text (out, "}\n")
+            val () = emit_SPACE (out)
+            val () = emit_LBRACE (out)
+            val () = emit_newline (out)
+            val () = emit2_instr (out, ind+1, ins)
+            val () = emit_RBRACE (out)
+            val () = emit_newline (out)
         }
         | ATSifnthen (d0e, inss) => {
             val-list_sing(ins) = inss
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "if !(")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "if")
+            val () = emit_SPACE (out)
+            val () = emit_text (out, "!")
+            val () = emit_LPAREN (out)
             val () = emit_d0exp (out, d0e)
-            val () = emit_text (out, ") {\n")
-            val () = emit_instr (out, ins)
-            val () = emit_text (out, "}\n")
+            val () = emit_RPAREN (out)
+            val () = emit_SPACE (out)
+            val () = emit_LBRACE (out)
+            val () = emit_newline (out)
+            val () = emit2_instr (out, ind+1, ins)
+            val () = emit_RBRACE (out)
+            val () = emit_newline (out)
         }
         | ATSbranchseq (inss) => {
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "#ATSbranch")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "/* ATSbranch */")
         }
         | ATScaseofseq (inss) => {
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "#ATScaseofseq_beg")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "/* ATScaseofseq_beg */")
             val () = emit_ENDL (out)
-            val () = emit_nspc (out, ind)
+            val () = emit_indent (out, ind)
             val () = emit_text (out, "tmplab_py = 1\n")
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "while(1):\n")
-            val () = emit_nspc (out, ind+2)
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "for {\n")
+            val () = emit_indent (out, ind+1)
             val () = emit_text (out, "mbranch_")
             val () = emit_branchmap_index (out, ins0)
             val () = emit_text (out, ".get(tmplab_py)()\n")
-            val () = emit_nspc (out, ind+2)
+            val () = emit_indent (out, ind+1)
             val () = emit_text (out, "if (tmplab_py == 0): break\n")
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "#ATScaseofseq_end")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "/* ATScaseofseq_end */")
         }
         | ATSreturn (tmp) => {
-            val () = emit_nspc (out, ind)
+            val () = emit_indent (out, ind)
             val () = emit_text (out, "return ")
             val () = emit_tmpvar (out, tmp)
         }
         | ATSreturn_void (tmp) => {
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "return#_void")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "return /* _void */")
         }
         | ATSlinepragma (line, file) => {
-            val () = emit_text (out, "#line ")
+            val () = emit_text (out, "/* line */")
             val () = emit_PMVint (out, line)
             val () = emit_SPACE (out)
             val () = emit_PMVstring (out, file)
         }
         | ATSINSlab (lab) => {
-            val () = emit_nspc (out, ind)
-            val () = emit_text (out, "#")
+            val () = emit_indent (out, ind)
+            val () = emit_text (out, "//")
             val () = emit_label (out, lab)
         }
         | ATSINSgoto (lab) => {
-            val () = emit_nspc (out, ind)
+            val () = emit_indent (out, ind)
             val () = emit_text (out, "tmplab_py = ")
             val () = emit_tmplab_index (out, lab)
             val () = (
@@ -536,12 +546,12 @@ implement emit2_instr
             )
         }
         | ATSINSflab (flab) => {
-            val () = emit_nspc (out, ind)
+            val () = emit_indent (out, ind)
             val () = emit_SHARP (out)
             val () = emit_label (out, flab)
         }
         | ATSINSfgoto (flab) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_text(out, "funlab_py = ")
             val () = emit_funlab_index(out, flab)
             val () =  (
@@ -551,23 +561,23 @@ implement emit2_instr
             )
         }
         | ATSINSfreeclo(d0e) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSINSfreeclo")
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "/* ATSINSfreeclo */")
             val () = emit_LPAREN(out)
             val () = emit_d0exp(out, d0e)
             val () = emit_RPAREN(out)
             val () = emit_SEMICOLON(out)
         }
         | ATSINSfreecon (d0e) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSINSfreecon")
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "/* ATSINSfreecon */")
             val () = emit_LPAREN(out)
             val () = emit_d0exp(out, d0e)
             val () = emit_RPAREN(out)
             val () = emit_SEMICOLON(out)
         }
         | ATSINSmove(tmp, d0e) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_tmpvar(out, tmp)
             val () = (
                 emit_text(out, " = ");
@@ -575,21 +585,21 @@ implement emit2_instr
             )
         }
         | ATSINSmove_void(tmp, d0e) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = (
                 case+ d0e.d0exp_node of
-                | ATSPMVempty _ => emit_text(out, "None#ATSINSmove_void")
+                | ATSPMVempty _ => emit_text(out, "None // ATSINSmove_void")
                 | _  => emit_d0exp(out, d0e)
             ) : void
         }
         | ATSINSmove_nil(tmp) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_tmpvar(out, tmp)
             val () = emit_text(out, " = ")
             val () = emit_text(out, "None")
         }
         | ATSINSmove_con0(tmp, tag) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_tmpvar(out, tmp)
             val () = (
                 emit_text(out, " = ");
@@ -603,41 +613,41 @@ implement emit2_instr
         | ATSINSmove_ldelay _ => emit2_ATSINSmove_ldelay(out, ind, ins0)
         | ATSINSmove_llazyeval _ => emit2_ATSINSmove_llazyeval(out, ind, ins0)
         | ATStailcalseq(inss) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATStailcalseq_beg")
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATStailcalseq_beg")
             val () = emit_ENDL(out)
             val () = emit2_instrlst(out, ind, inss)
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATStailcalseq_end")
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATStailcalseq_end")
         }
         | ATSINSmove_tlcal(tmp, d0e) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_tmpvar(out, tmp)
             val () = emit_text(out, " = ")
             val () = emit_d0exp(out, d0e)
         }
         | ATSINSargmove_tlcal(tmp1, tmp2) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_tmpvar(out, tmp1)
             val () = emit_text(out, " = ")
             val () = emit_tmpvar(out, tmp2)
         }
         | ATSINSextvar_assign(ext, d0e_r) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_d0exp(out, ext)
             val () = emit_text(out, " = ")
             val () = emit_d0exp(out, d0e_r)
             val () = emit_SEMICOLON(out)
         }
         | ATSINSdyncst_valbind(d2c, d0e_r) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_i0de(out, d2c)
             val () = emit_text(out, " = ")
             val () = emit_d0exp(out, d0e_r)
             val () = emit_SEMICOLON(out)
         }
         | ATSINScaseof_fail(errmsg) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = emit_text(out, "ATSINScaseof_fail")
             val () = emit_LPAREN(out)
             val () = emit_PMVstring(out, errmsg)
@@ -645,54 +655,54 @@ implement emit2_instr
             val () = emit_SEMICOLON(out)
         }
         | ATSINSdeadcode_fail(__tok__) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () =
             emit_text(out, "ATSINSdeadcode_fail()")
             val () = emit_SEMICOLON(out)
         }
         | ATSdynload(dummy) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSdynload()")
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATSdynload()")
             val () = emit_the_statmpdeclst(out, ind)
         }
         | ATSdynloadset(flag) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSdynloadset\n")
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATSdynloadset\n")
+            val () = emit_indent(out, ind)
             val () = (
                 emit_tmpvar(out, flag);
                 emit_text(out, " = 1")
             )
         }
         | ATSdynloadfcall(fcall) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSdynloadfcall\n")
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATSdynloadfcall\n")
+            val () = emit_indent(out, ind)
             val () = (
                 emit_tmpvar(out, fcall);
                 emit_text(out, "()")
             )
         }
         | ATSdynloadflag_sta(flag) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSdynloadflag_sta\n")
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATSdynloadflag_sta\n")
+            val () = emit_indent(out, ind)
             val () = (
                 emit_text(out, "global ");
                 emit_tmpvar(out, flag)
             )
         }
         | ATSdynloadflag_ext(flag) => {
-            val () = emit_nspc(out, ind)
-            val () = emit_text(out, "#ATSdynloadflag_ext\n")
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
+            val () = emit_text(out, "// ATSdynloadflag_ext\n")
+            val () = emit_indent(out, ind)
             val () = (
                 emit_text(out, "global ");
                 emit_tmpvar(out, flag)
             )
         }
         | _  => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () =
             fprint!(out, "ERROR: UNRECOGNIZED-INSTRUCTION: ", ins0)
         }
@@ -774,7 +784,7 @@ implement emit2_ATSINSmove_con1
 
         val d0es = getarglst(inss)
 
-        val () = emit_nspc(out, ind)
+        val () = emit_indent(out, ind)
         val () = emit_tmpvar(out, tmp)
         val () = emit_text(out, " = ")
         val () = emit_LPAREN(out)
@@ -828,7 +838,7 @@ implement emit2_ATSINSmove_boxrec
 
         val d0es = getarglst (inss)
 
-        val () = emit_nspc(out, ind)
+        val () = emit_indent(out, ind)
         val () = emit_tmpvar(out, tmp)
         val () = emit_text(out, " = ")
         val () = emit_LPAREN(out)
@@ -846,7 +856,7 @@ implement emit2_ATSINSmove_delay
 (out, ind, ins0) =
     let
         val- ATSINSmove_delay (tmp, s0e, thunk) = ins0.instr_node
-        val () = emit_nspc(out, ind)
+        val () = emit_indent(out, ind)
         val () = emit_tmpvar(out, tmp)
         val () = emit_text(out, " = [")
         val () = (
@@ -862,7 +872,7 @@ implement emit2_ATSINSmove_lazyeval
 (out, ind, ins0) =
     let
         val- ATSINSmove_lazyeval (tmp, s0e, lazyval) = ins0.instr_node
-        val () = emit_nspc(out, ind)
+        val () = emit_indent(out, ind)
 
         val () = (
            emit_tmpvar(out, tmp);
@@ -880,7 +890,7 @@ implement emit2_ATSINSmove_ldelay
 (out, ind, ins0) =
     let
         val- ATSINSmove_ldelay (tmp, s0e, thunk) = ins0.instr_node
-        val () = emit_nspc (out, ind)
+        val () = emit_indent (out, ind)
 
         val () = (
             emit_tmpvar(out, tmp);
@@ -894,7 +904,7 @@ implement emit2_ATSINSmove_llazyeval
 (out, ind, ins0) =
     let
         val- ATSINSmove_llazyeval (tmp, s0e, lazyval) = ins0.instr_node
-        val () = emit_nspc(out, ind)
+        val () = emit_indent(out, ind)
 
         val () = (
             emit_tmpvar(out, tmp);
@@ -910,8 +920,8 @@ implement emit2_ATSINSmove_llazyeval
     end
 
 
-#define ATSEXTCODE_BEG "######\n#ATSextcode_beg()\n######"
-#define ATSEXTCODE_END "######\n#ATSextcode_end()\n######"
+#define ATSEXTCODE_BEG "// ######\n// ATSextcode_beg()\n// ######"
+#define ATSEXTCODE_END "// ######\n// ATSextcode_end()\n// ######"
 
 implement emit_d0ecl
 (out, d0c0) =
@@ -924,7 +934,7 @@ implement emit_d0ecl
         | D0Ctypedef (id, def) => typedef_insert (id.i0dex_sym, def)
         | D0Cassume (id) => {
             val () = emit_ENDL (out)
-            val () = emit_text (out, "#ATSassume(")
+            val () = emit_text (out, "// ATSassume(")
             val () = (
                 emit_i0de (out, id);
                 emit_text (out, ")\n")
@@ -940,7 +950,7 @@ implement emit_d0ecl
             val () = (
                 case+ opt of
                 | Some _ => ()
-                | None () => emit_text(out, "#")
+                | None () => emit_text(out, "//")
             )
             val () = (
                 emit_tmpvar(out, tmp);
@@ -967,17 +977,17 @@ implement emit_d0ecl
             )
         }
         | D0Cdynexn_dec(idexn) => (
-            emit_text(out, "## dynexn_dec(");
+            emit_text(out, "// dynexn_dec(");
             emit_i0de(out, idexn);
             emit_text(out, ")\n")
         )
         | D0Cdynexn_extdec(idexn) => (
-            emit_text(out, "## dynexn_extdec(");
+            emit_text(out, "// dynexn_extdec(");
             emit_i0de(out, idexn);
             emit_text(out, ")\n")
         )
         | D0Cdynexn_initize(idexn, fullname) => (
-            emit_text(out, "## dynexn_initize(");
+            emit_text(out, "// dynexn_initize(");
             emit_i0de(out, idexn);
             emit_text(out, ")\n")
         )
@@ -992,11 +1002,11 @@ implement emit2_tmpdec
     in
         case+ td.tmpdec_node of
         | TMPDECnone(tmp) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = (emit_SHARP(out); emit_tmpvar(out, tmp))
         }
         | TMPDECsome(tmp, s0e) => {
-            val () = emit_nspc(out, ind)
+            val () = emit_indent(out, ind)
             val () = (emit_tmpvar(out, tmp); emit_text(out, " := nil"))
         }
     end
@@ -1023,7 +1033,7 @@ local
             val-list_cons(ins, inss) = inss
             val-ATSINSlab(lab) = ins.instr_node
 
-            val () = emit_nspc(out, 2)
+            val () = emit_indent(out, 1)
             val () = emit_text(out, "def")
             val () = emit_SPACE(out)
             val () = emit_label(out, lab)
@@ -1031,7 +1041,7 @@ local
 
             val () = emit_fundef_nonlocal (out)
 
-            val () = emit_nspc(out, 4)
+            val () = emit_indent(out, 2)
             val () = emit_text(out, "tmplab_py = 0\n")
         in
             auxlst2( out, lab, inss )
@@ -1045,22 +1055,22 @@ local
             in
                 case+ inss of
                 | list_nil () => {
-                    val () = emit_nspc(out, 4)
+                    val () = emit_indent(out, 2)
                     val () = emit_text(out, "return\n")
                 }
 
                 | list_cons (ins1, inss2) => (
                     case+ ins1.instr_node of
                     | ATSINSlab(lab) => auxlst(out, inss) where {
-                        val () = emit_nspc(out, 4)
+                        val () = emit_indent(out, 2)
                         val () = emit_label(out, lab)
                         val () = emit_text(out, "()\n")
-                        val () = emit_nspc(out, 4)
+                        val () = emit_indent(out, 2)
                         val () = emit_text(out, "return\n")
                     }
                     | _  => auxlst2(out, lab, inss2) where {
                         val () = (
-                            emit2_instr(out, 4, ins1);
+                            emit2_instr(out, 2, ins1);
                             emit_ENDL(out)
                         )
                     }
@@ -1096,7 +1106,7 @@ emit_fundef_nonlocal
     val tmpdecs = the_tmpdeclst_get()
     val () = emit_tmpdeclst_nonlocal(out, tmpdecs)
 
-    val () = emit_nspc(out, 4)
+    val () = emit_indent(out, 2)
     val () = emit_text(out, "nonlocal funlab_py, tmplab_py\n")
 
     val inss_caseof = the_caseofseqlst_get()
@@ -1126,32 +1136,33 @@ fun emit_caseofseqlst
 )
 
 implement emit_f0arg
-(out, f0a) = let
-in
-    case+ f0a.f0arg_node of
-    | F0ARGnone _ => emit_text(out, "__NONE__")
-    | F0ARGsome(arg, s0e) => emit_tmpvar(out, arg)
-end
+(out, f0a) =
+    let
+    in
+        case+ f0a.f0arg_node of
+        | F0ARGnone _ => emit_text(out, "__NONE__")
+        | F0ARGsome(arg, s0e) => emit_tmpvar(out, arg)
+    end
 
 implement emit_f0marg
 (out, f0ma) =
-let
-    fun loop
-    (out: FILEref, f0as: f0arglst, i: int)
-    : void = (
-        case+ f0as of
-        | list_nil() => ()
-        | list_cons(f0a, f0as) => let
-            val () =
-            if i > 0 then emit_text(out, ", ")
-        in
-            emit_f0arg(out, f0a);
-            loop(out, f0as, i+1)
-        end
-    )
-in
-    loop(out, f0ma.f0marg_node, 0)
-end
+    let
+        fun loop
+        (out: FILEref, f0as: f0arglst, i: int)
+        : void = (
+            case+ f0as of
+            | list_nil() => ()
+            | list_cons(f0a, f0as) => let
+                val () =
+                if i > 0 then emit_text(out, ", ")
+            in
+                emit_f0arg(out, f0a);
+                loop(out, f0as, i+1)
+            end
+        )
+    in
+        loop(out, f0ma.f0marg_node, 0)
+    end
 
 
 implement emit_f0head
@@ -1160,14 +1171,12 @@ implement emit_f0head
         val f0as = f0head_get_f0arglst(fhd)
         val () = the_f0arglst_set(f0as)
     in
-        case+
-        fhd.f0head_node of
+        case+ fhd.f0head_node of
         | F0HEAD (fid, f0ma, res) => {
             val () = emit_tmpvar(out, fid)
             val () = emit_LPAREN(out)
             val () = emit_f0marg(out, f0ma)
             val () = emit_RPAREN(out)
-            val () = emit_text (out, " {")
         }
     end
 
@@ -1175,9 +1184,7 @@ implement emit_f0body
 (out, fbody) =
     let
         val knd = f0body_classify (fbody)
-        (*
-        val () = println! ("emit_f0body: knd = ", knd)
-        *)
+        (* val () = println! ("emit_f0body: knd = ", knd) *)
 
         val tmpdecs = f0body_get_tmpdeclst(fbody)
         val inss_body = f0body_get_bdinstrlst(fbody)
@@ -1189,14 +1196,16 @@ implement emit_f0body
 
         val () = emit_tmpdeclst_initize(out, tmpdecs)
 
-        val () = emit_nspc(out, 2)
-        val () = emit_text(out, "funlab_py = None\n")
-        val () = emit_nspc(out, 2)
-        val () = emit_text(out, "tmplab_py = None\n")
+        val () = emit_indent(out, 1)
+        val () = emit_text(out, "funlab_go := nil")
+        val () = emit_newline(out)
+        val () = emit_indent(out, 1)
+        val () = emit_text(out, "tmplab_go := nil")
+        val () = emit_newline (out)
 
         val () = emit_mbranchlst_initize(out, inss_caseof)
-        val () = emit_caseofseqlst (out, inss_caseof)
-        val () = emit_branchmaplst (out, inss_caseof)
+        val () = emit_caseofseqlst(out, inss_caseof)
+        val () = emit_branchmaplst(out, inss_caseof)
     in
         case+ knd of
         | 0 => emit_f0body_0(out, fbody)
@@ -1215,10 +1224,9 @@ implement emit_f0body_0
         | list_nil () => ()
         | list_cons (ins0, inss1) =>
             let
-
                 val- list_cons(ins1, inss2) = inss1
-                val () = emit2_ATSfunbodyseq(out, 2, ins0)
-                val () = emit2_instr_ln(out, 2, ins1)
+                val () = emit2_ATSfunbodyseq(out, 1, ins0)
+                val () = emit2_instr_ln(out, 1, ins1)
             in
                 auxlst(out, inss2)
             end
@@ -1240,19 +1248,24 @@ let
         | list_cons (ins0, inss1) =>
             let
                 val- list_cons(ins1, inss2) = inss1
-                val () = emit2_ATSfunbodyseq(out, 4, ins0)
-                val () = emit_nspc(out, 4)
-                val () = emit_text(out, "if (funlab_py == 0): break\n")
-                val () = emit2_instr_ln(out, 2, ins1)
+                val () = emit2_ATSfunbodyseq(out, 2, ins0)
+                val () = emit_indent(out, 2)
+                val () = emit_text(out, "if funlab_go == 0 {\n")
+                val () = emit_indent(out, 3)
+                val () = emit2_instr_ln(out, 1, ins1)
+                val () = emit_indent(out, 2)
+                val () = emit_text(out, "}\n")
             in
                 auxlst (out, inss2)
             end
     )
 
-    val () = emit_nspc(out, 2)
-    val () = emit_text(out, "while(1):\n")
-    val () = emit_nspc(out, 4)
-    val () = emit_text(out, "funlab_py = 0\n")
+    val () = emit_indent(out, 1)
+    val () = emit_text(out, "for {")
+    val () = emit_newline(out)
+    val () = emit_indent(out, 2)
+    val () = emit_text(out, "funlab_go := 0")
+    val () = emit_newline(out)
     val () = (
         case+ fbody.f0body_node of
         | F0BODY(tds, inss) => auxlst(out, inss)
@@ -1286,7 +1299,7 @@ emit_mfundef_initize
                 end
         )
 
-        val () = emit_nspc(out, 2)
+        val () = emit_indent(out, 2)
         val () = emit_text(out, "mfundef = { ")
         val () = auxlst (out, inss, 1)
         val () = emit_text (out, " }\n")
@@ -1304,15 +1317,15 @@ implement emit_the_funbodylst
                 val- list_cons(ins1, inss) = inss
                 val- ATSINSflab(fl) = ins1.instr_node
 
-                val () = emit_nspc(out, 2)
+                val () = emit_indent(out, 1)
                 val () = emit_text(out, "def")
                 val () = emit_SPACE(out)
                 val () = emit_label(out, fl)
                 val () = emit_text(out, "():\n")
                 val () = emit_fundef_nonlocal(out)
-                val () = emit_nspc(out, 4)
+                val () = emit_indent(out, 2)
                 val () = emit_text(out, "funlab_py = 0\n")
-                val () = emit2_instrlst(out, 4, inss)
+                val () = emit2_instrlst(out, 2, inss)
             in
             end
 
@@ -1325,7 +1338,7 @@ implement emit_the_funbodylst
                 val- list_cons(ins0, inss) = inss
                 val- list_cons(ins1, inss) = inss
                 val () = auxfun(out, ins0)
-                val () = emit2_instr_newline(out, 4, ins1)
+                val () = emit2_instr_newline(out, 2, ins1)
             in
                 auxlst(out, inss)
             end
@@ -1339,18 +1352,18 @@ implement emit_the_funbodylst
 
 implement emit_f0body_tlcal2
 (out, fbody) = let
-    val () = emit_nspc(out, 2)
+    val () = emit_indent(out, 1)
     val () = emit_text(out, "tmpret_py = None\n")
     val () = emit_the_funbodylst(out)
-    val () = emit_nspc(out, 2)
+    val () = emit_indent(out, 1)
     val () = emit_text(out, "funlab_py = 1\n")
-    val () = emit_nspc(out, 2)
+    val () = emit_indent(out, 1)
     val () = emit_text(out, "while(1):\n")
-    val () = emit_nspc(out, 4)
+    val () = emit_indent(out, 2)
     val () = emit_text(out, "tmpret_py = mfundef.get(funlab_py)()\n")
-    val () = emit_nspc(out, 4)
+    val () = emit_indent(out, 2)
     val () = emit_text(out, "if (funlab_py == 0): break\n")
-    val () = emit_nspc(out, 2)
+    val () = emit_indent(out, 1)
     val () = emit_text(out, "return tmpret_py\n")
 in
 end
@@ -1366,8 +1379,11 @@ implement emit_f0decl
             val () = emit_text(out, "fun")
             val () = emit_SPACE(out)
             val () = emit_f0head(out, fhd)
+            val () = emit_SPACE(out)
+            val () = emit_LBRACE(out)
             val () = emit_ENDL(out)
             val () = emit_f0body(out, fbody)
+            val () = emit_RBRACE(out)
             val () = emit_newline(out)
         }
     end
