@@ -1,0 +1,358 @@
+{
+  "s2cstmap": [
+    {
+      "s2cst_sym": "g0int_t0ype",
+      "s2cst_srt": {
+        "S2RTfun": [
+          [
+            {
+              "S2RTbas": [
+                "tkind"
+              ]
+            }
+          ],
+          {
+            "S2RTbas": [
+              "t@ype"
+            ]
+          }
+        ]
+      },
+      "s2cst_stamp": 207,
+      "s2cst_extdef": [],
+      "s2cst_supcls": [],
+      "s2cst_dconlst": []
+    },
+    {
+      "s2cst_sym": "int",
+      "s2cst_srt": {
+        "S2RTbas": [
+          "t@ype"
+        ]
+      },
+      "s2cst_stamp": 237,
+      "s2cst_extdef": [],
+      "s2cst_supcls": [],
+      "s2cst_dconlst": []
+    }
+  ],
+  "s2varmap": [],
+  "d2conmap": [],
+  "d2cstmap": [],
+  "d2varmap": [
+    {
+      "d2var_sym": "fact",
+      "d2var_stamp": 74
+    },
+    {
+      "d2var_sym": "n",
+      "d2var_stamp": 75
+    }
+  ],
+  "d2eclist": [
+    {
+      "d2ecl_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 2(line=2, offs=1) -- 66(line=5, offs=21)",
+      "d2ecl_node": {
+        "D2Cfundecs": [
+          "FK_fun",
+          {},
+          [
+            {
+              "f2undec_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 6(line=2, offs=5) -- 66(line=5, offs=21)",
+              "f2undec_var": {
+                "d2var_stamp": 74
+              },
+              "f2undec_def": {
+                "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 10(line=2, offs=9) -- 66(line=5, offs=21)",
+                "d2exp_node": {
+                  "D2Elam_dyn": [
+                    0,
+                    -1,
+                    [
+                      {
+                        "p2at_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 11(line=2, offs=10) -- 17(line=2, offs=16)",
+                        "p2at_node": {
+                          "P2Tann": [
+                            {
+                              "p2at_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 11(line=2, offs=10) -- 12(line=2, offs=11)",
+                              "p2at_node": {
+                                "P2Tvar": [
+                                  {
+                                    "d2var_stamp": 75
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "s2exp_srt": {
+                                "S2RTbas": [
+                                  "t@ype"
+                                ]
+                              },
+                              "s2exp_node": {
+                                "S2Eapp": [
+                                  {
+                                    "s2exp_srt": {
+                                      "S2RTfun": [
+                                        [
+                                          {
+                                            "S2RTbas": [
+                                              "tkind"
+                                            ]
+                                          }
+                                        ],
+                                        {
+                                          "S2RTbas": [
+                                            "t@ype"
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    "s2exp_node": {
+                                      "S2Ecst": [
+                                        {
+                                          "s2cst_stamp": 207
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  [
+                                    {
+                                      "s2exp_srt": {
+                                        "S2RTbas": [
+                                          "tkind"
+                                        ]
+                                      },
+                                      "s2exp_node": {
+                                        "S2Eextkind": [
+                                          "atstype_int"
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    {
+                      "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 20(line=2, offs=19) -- 66(line=5, offs=21)",
+                      "d2exp_node": {
+                        "D2Eann_seff": [
+                          {
+                            "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 20(line=2, offs=19) -- 66(line=5, offs=21)",
+                            "d2exp_node": {
+                              "D2Eann_type": [
+                                {
+                                  "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 28(line=3, offs=3) -- 66(line=5, offs=21)",
+                                  "d2exp_node": {
+                                    "D2Eifhead": [
+                                      {},
+                                      {
+                                        "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 31(line=3, offs=6) -- 36(line=3, offs=11)",
+                                        "d2exp_node": {
+                                          "D2Eapplst": [
+                                            {
+                                              "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 33(line=3, offs=8) -- 34(line=3, offs=9)",
+                                              "d2exp_node": {
+                                                "D2Esym": [
+                                                  {
+                                                    "d2sym_sym": "<"
+                                                  }
+                                                ]
+                                              }
+                                            },
+                                            [
+                                              {
+                                                "D2EXPARGdyn": [
+                                                  -1,
+                                                  "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 31(line=3, offs=6) -- 36(line=3, offs=11)",
+                                                  [
+                                                    {
+                                                      "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 31(line=3, offs=6) -- 32(line=3, offs=7)",
+                                                      "d2exp_node": {
+                                                        "D2Evar": [
+                                                          {
+                                                            "d2var_stamp": 75
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    {
+                                                      "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 35(line=3, offs=10) -- 36(line=3, offs=11)",
+                                                      "d2exp_node": {
+                                                        "D2Ei0nt": [
+                                                          "1"
+                                                        ]
+                                                      }
+                                                    }
+                                                  ]
+                                                ]
+                                              }
+                                            ]
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 44(line=4, offs=8) -- 45(line=4, offs=9)",
+                                        "d2exp_node": {
+                                          "D2Ei0nt": [
+                                            "1"
+                                          ]
+                                        }
+                                      },
+                                      [
+                                        {
+                                          "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 53(line=5, offs=8) -- 66(line=5, offs=21)",
+                                          "d2exp_node": {
+                                            "D2Eapplst": [
+                                              {
+                                                "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 55(line=5, offs=10) -- 56(line=5, offs=11)",
+                                                "d2exp_node": {
+                                                  "D2Esym": [
+                                                    {
+                                                      "d2sym_sym": "*"
+                                                    }
+                                                  ]
+                                                }
+                                              },
+                                              [
+                                                {
+                                                  "D2EXPARGdyn": [
+                                                    -1,
+                                                    "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 53(line=5, offs=8) -- 66(line=5, offs=21)",
+                                                    [
+                                                      {
+                                                        "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 53(line=5, offs=8) -- 54(line=5, offs=9)",
+                                                        "d2exp_node": {
+                                                          "D2Evar": [
+                                                            {
+                                                              "d2var_stamp": 75
+                                                            }
+                                                          ]
+                                                        }
+                                                      },
+                                                      {
+                                                        "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 57(line=5, offs=12) -- 66(line=5, offs=21)",
+                                                        "d2exp_node": {
+                                                          "D2Eapplst": [
+                                                            {
+                                                              "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 57(line=5, offs=12) -- 61(line=5, offs=16)",
+                                                              "d2exp_node": {
+                                                                "D2Evar": [
+                                                                  {
+                                                                    "d2var_stamp": 74
+                                                                  }
+                                                                ]
+                                                              }
+                                                            },
+                                                            [
+                                                              {
+                                                                "D2EXPARGdyn": [
+                                                                  -1,
+                                                                  "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 61(line=5, offs=16) -- 66(line=5, offs=21)",
+                                                                  [
+                                                                    {
+                                                                      "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 61(line=5, offs=16) -- 66(line=5, offs=21)",
+                                                                      "d2exp_node": {
+                                                                        "D2Esing": [
+                                                                          {
+                                                                            "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 62(line=5, offs=17) -- 65(line=5, offs=20)",
+                                                                            "d2exp_node": {
+                                                                              "D2Eapplst": [
+                                                                                {
+                                                                                  "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 63(line=5, offs=18) -- 64(line=5, offs=19)",
+                                                                                  "d2exp_node": {
+                                                                                    "D2Esym": [
+                                                                                      {
+                                                                                        "d2sym_sym": "-"
+                                                                                      }
+                                                                                    ]
+                                                                                  }
+                                                                                },
+                                                                                [
+                                                                                  {
+                                                                                    "D2EXPARGdyn": [
+                                                                                      -1,
+                                                                                      "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 62(line=5, offs=17) -- 65(line=5, offs=20)",
+                                                                                      [
+                                                                                        {
+                                                                                          "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 62(line=5, offs=17) -- 63(line=5, offs=18)",
+                                                                                          "d2exp_node": {
+                                                                                            "D2Evar": [
+                                                                                              {
+                                                                                                "d2var_stamp": 75
+                                                                                              }
+                                                                                            ]
+                                                                                          }
+                                                                                        },
+                                                                                        {
+                                                                                          "d2exp_loc": "/mnt/c/Users/samiz/Programming/ats-go/test/fixtures/simple.dats: 64(line=5, offs=19) -- 65(line=5, offs=20)",
+                                                                                          "d2exp_node": {
+                                                                                            "D2Ei0nt": [
+                                                                                              "1"
+                                                                                            ]
+                                                                                          }
+                                                                                        }
+                                                                                      ]
+                                                                                    ]
+                                                                                  }
+                                                                                ]
+                                                                              ]
+                                                                            }
+                                                                          }
+                                                                        ]
+                                                                      }
+                                                                    }
+                                                                  ]
+                                                                ]
+                                                              }
+                                                            ]
+                                                          ]
+                                                        }
+                                                      }
+                                                    ]
+                                                  ]
+                                                }
+                                              ]
+                                            ]
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                },
+                                {
+                                  "s2exp_srt": {
+                                    "S2RTbas": [
+                                      "t@ype"
+                                    ]
+                                  },
+                                  "s2exp_node": {
+                                    "S2Ecst": [
+                                      {
+                                        "s2cst_stamp": 237
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {}
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "f2undec_ann": []
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}
